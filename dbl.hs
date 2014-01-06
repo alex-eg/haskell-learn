@@ -19,3 +19,8 @@ mydrop' :: Int -> [a] -> [a]
 mydrop' 0 xs = xs
 mydrop' n (_:xs) = mydrop' (n - 1) xs
               
+mdropwhile' :: (a -> Bool) -> [a] -> [a]
+mdropwhile' _ [] = []
+mdropwhile' f (x:xs)
+  | f x = x:xs
+  | otherwise = xs
