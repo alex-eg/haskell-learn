@@ -26,7 +26,10 @@ mdropwhile' f (x:xs)
   | otherwise = xs
 
 data Point = Point Float Float
-data Shape = Circle Point Float | Rect Point Point
+             deriving Show
+data Shape = Circle Point Float
+           | Rect Point Point
+             deriving Show
 
 area :: Shape -> Float
 area (Circle _ r) = pi * r^2
