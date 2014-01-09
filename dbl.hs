@@ -24,3 +24,10 @@ mdropwhile' _ [] = []
 mdropwhile' f (x:xs)
   | f x = x:xs
   | otherwise = xs
+
+data Point = Point Float Float
+data Shape = Circle Point Float | Rect Point Point
+
+area :: Shape -> Float
+area (Circle _ r) = pi * r^2
+area (Rect (Point x1 y1) (Point x2 y2)) = abs $ (x2 - x1) * (y2 - y1)
