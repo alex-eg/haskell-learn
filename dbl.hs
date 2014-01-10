@@ -42,3 +42,6 @@ qsort (x:xs) = qsort [x' | x' <- xs, x' >= x] ++
                qsort [x' | x' <- xs, x' < x]
                
 hello = putStrLn "Hello, world!"
+
+addThree :: Int -> Int -> Int -> Int
+addThree x y z = x + y + z
