@@ -41,3 +41,4 @@ qsort (x:xs) = qsort [x' | x' <- xs, x' >= x] ++
                [x] ++
                qsort [x' | x' <- xs, x' < x]
                
+hello = putStrLn "Hello, world!"
