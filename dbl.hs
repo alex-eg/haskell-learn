@@ -34,3 +34,10 @@ data Shape = Circle Point Float
 area :: Shape -> Float
 area (Circle _ r) = pi * r^2
 area (Rect (Point x1 y1) (Point x2 y2)) = abs $ (x2 - x1) * (y2 - y1)
+
+qsort :: (Ord a) => [a] -> [a]
+qsort [] = []
+qsort (x:xs) = qsort [x' | x' <- xs, x' >= x] ++
+               [x] ++
+               qsort [x' | x' <- xs, x' < x]
+               
