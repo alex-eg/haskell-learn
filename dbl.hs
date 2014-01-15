@@ -45,3 +45,17 @@ hello = putStrLn "Hello, world!"
 
 addThree :: Int -> Int -> Int -> Int
 addThree x y z = x + y + z
+
+data Tree a = Empty |
+              Node a (Tree a) (Tree a)
+              deriving Show
+
+singleton  :: a -> Tree a
+singleton x = Node x Empty Empty
+
+treeInsert :: (Ord a) => a -> Tree a -> Tree a
+treeInsert x Empty = singleton x
+treeInsert x (Node a left right)
+  | x == a = Node x left right
+  | x < a = Node a (treeInsert x left) right
+  | x > a = Node a left $ treeInsert x right
