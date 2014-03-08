@@ -18,7 +18,7 @@ mydrop n l =
 mydrop' :: Int -> [a] -> [a]
 mydrop' 0 xs = xs
 mydrop' n (_:xs) = mydrop' (n - 1) xs
-              
+
 mdropwhile' :: (a -> Bool) -> [a] -> [a]
 mdropwhile' _ [] = []
 mdropwhile' f (x:xs)
@@ -40,7 +40,7 @@ qsort [] = []
 qsort (x:xs) = qsort [x' | x' <- xs, x' >= x] ++
                [x] ++
                qsort [x' | x' <- xs, x' < x]
-               
+
 hello = putStrLn "Hello, world!"
 
 addThree :: Int -> Int -> Int -> Int
