@@ -59,3 +59,12 @@ treeInsert x (Node a left right)
   | x == a = Node x left right
   | x < a = Node a (treeInsert x left) right
   | x > a = Node a left $ treeInsert x right
+
+fact' :: Int -> Int
+fact' 0 = 1
+fact' n = n * fact' (n - 1)
+
+sumSoFar x [] = [x]
+sumSoFar x (y:ys) = x : sumSoFar (x+y) ys
+
+infiniteFib = 1 : 1 : zipWith (+) infiniteFib (tail infiniteFib)
