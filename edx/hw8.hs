@@ -54,3 +54,35 @@ slist8 (m:ms)
   = do a <- m
        as <- slist8 ms
        return (a:as)
+
+mM1  :: Monad m => (a -> m b) -> [a] -> m [b]
+mM2  :: Monad m => (a -> m b) -> [a] -> m [b]
+mM6  :: Monad m => (a -> m b) -> [a] -> m [b]
+mM7  :: Monad m => (a -> m b) -> [a] -> m [b]
+mM8  :: Monad m => (a -> m b) -> [a] -> m [b]
+
+mM1 f as = slist1 (map f as)
+
+mM2 f [] = return []
+mM2 f (a : as)
+  = f a >>= \b -> mM2 f as >>= \bs -> return (b : bs)
+
+mM6 f [] = return []
+mM6 f (a : as) =
+  do b <- f a
+     bs <- mM6 f as
+     return (b : bs)
+
+mM7 f [] = return []
+mM7 f (a : as)
+  = f a >>=
+    \ b ->
+      do bs <- mM7 f as
+         return (b : bs)
+
+mM8 f [] = return []
+mM8 f (a : as)
+  = f a >>=
+    \ b ->
+      do bs <- mM8 f as
+         return (bs ++ [b])
