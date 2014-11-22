@@ -86,3 +86,9 @@ mM8 f (a : as)
     \ b ->
       do bs <- mM8 f as
          return (bs ++ [b])
+
+filterM :: (Monad m) => (a -> m Bool) -> [a] -> m [a]
+filterM _ [] = return []
+filterM p (x : xs) = do flag <- p x
+                        ys <- filterM p xs
+                        if flag then return (x:ys) else return ys
