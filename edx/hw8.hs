@@ -92,3 +92,10 @@ filterM _ [] = return []
 filterM p (x : xs) = do flag <- p x
                         ys <- filterM p xs
                         if flag then return (x:ys) else return ys
+
+foldLeftM :: Monad m => (a -> b -> m a) -> a -> [b] -> m a
+foldLeftM f a [] = return a
+foldLeftM f a (x:xs) = f a x >>= (\ n -> foldLeftM f n xs)
+
+foldRightM :: Monad m => (b -> a -> m a) -> a -> [b] -> m a
+foldRightM f a xs = foldr (\x a -> a >>= (\b -> f x b)) (return a) xs
