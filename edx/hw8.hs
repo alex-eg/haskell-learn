@@ -99,3 +99,24 @@ foldLeftM f a (x:xs) = f a x >>= (\ n -> foldLeftM f n xs)
 
 foldRightM :: Monad m => (b -> a -> m a) -> a -> [b] -> m a
 foldRightM f a xs = foldr (\x a -> a >>= (\b -> f x b)) (return a) xs
+
+liftM0 :: Monad m => (a -> b) -> m a -> m b
+liftM1 :: Monad m => (a -> b) -> m a -> m b
+liftM2 :: Monad m => (a -> b) -> m a -> m b
+liftM3 :: Monad m => (a -> b) -> m a -> m b
+liftM4 :: Monad m => (a -> b) -> m a -> m b
+liftM5 :: Monad m => (a -> b) -> m a -> m b
+liftM6 :: Monad m => (a -> b) -> m a -> m b
+liftM7 :: Monad m => (a -> b) -> m a -> m b
+
+liftM0 f m = do x <- m
+                return (f x)
+
+liftM1 f m = undefined -- m >>= \ a -> f a -- doesn't even typecheck
+liftM2 f m = m >>= \ a -> return (f a)
+liftM3 f m = undefined -- return (f m) -- fails typecheck also
+liftM4 f m = m >>= \ a -> m >>= \ b -> return (f a)
+liftM5 f m = m >>= \ a -> m >>= \ b -> return (f b)
+liftM6 f m = undefined -- mapM f [m]
+liftM7 f m = undefined -- m >> \ a -> return (f a) -- fail
+
