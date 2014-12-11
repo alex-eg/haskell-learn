@@ -19,7 +19,7 @@ instance Show Action where
 -- ===================================
 
 action :: Concurrent a -> Action
-action = error "You have to implement action"
+action (Concurrent a) = a (\x -> Stop)
 
 
 -- ===================================
@@ -27,7 +27,7 @@ action = error "You have to implement action"
 -- ===================================
 
 stop :: Concurrent a
-stop = error "You have to implement stop"
+stop = Concurrent (\x -> Stop)
 
 
 -- ===================================
@@ -35,8 +35,8 @@ stop = error "You have to implement stop"
 -- ===================================
 
 atom :: IO a -> Concurrent a
-atom = error "You have to implement atom"
-
+--atom =  \c -> Concurrent()
+atom =  \c -> Concurrent(c >>= (\b -> Atom b))
 
 -- ===================================
 -- Ex. 3
