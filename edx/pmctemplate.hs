@@ -35,18 +35,16 @@ stop = Concurrent (\x -> Stop)
 -- ===================================
 
 atom :: IO a -> Concurrent a
---atom =  \c -> Concurrent()
-atom =  \c -> Concurrent(c >>= (\b -> Atom b))
-
+atom a = Concurrent(\y -> Atom(a >> a >>= (\x -> return Stop)))
 -- ===================================
 -- Ex. 3
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork = error "You have to implement fork"
+fork b = Concurrent (\x -> (Fork (action b) (action b)))
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
-par = error "You have to implement par"
+par a b = Concurrent(\x -> Fork (action (fork a)) (action (fork b)))
 
 
 -- ===================================
