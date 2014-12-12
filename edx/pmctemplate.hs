@@ -51,8 +51,11 @@ par a b = Concurrent(\x -> Fork (action (fork a)) (action (fork b)))
 -- Ex. 4
 -- ===================================
 
+bind :: ((a -> Action) -> Action) -> (a -> ((b -> Action) -> Action)) -> ((b -> Action) -> Action)
+bind f g = \x -> f (\y -> g y x)
+
 instance Monad Concurrent where
-    (Concurrent f) >>= g = error "You have to implement >>="
+    (Concurrent f) >>= g = Concurrent(\x -> f (\y -> (\(Concurrent w) -> w x) (g y)))
     return x = Concurrent (\c -> c x)
 
 
