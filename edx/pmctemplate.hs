@@ -35,16 +35,16 @@ stop = Concurrent (\x -> Stop)
 -- ===================================
 
 atom :: IO a -> Concurrent a
-atom a = Concurrent(\y -> Atom(a >> a >>= (\x -> return Stop)))
+atom a = Concurrent (\c -> Atom ( a >>= \x -> return (c x)))
 -- ===================================
 -- Ex. 3
 -- ===================================
 
 fork :: Concurrent a -> Concurrent ()
-fork b = Concurrent (\x -> (Fork (action b) (action b)))
+fork b = Concurrent (\x -> Fork (action b) (x ()))
 
 par :: Concurrent a -> Concurrent a -> Concurrent a
-par a b = Concurrent(\x -> Fork (action (fork a)) (action (fork b)))
+par a b = Concurrent(\x -> Fork (action  a) (action  b))
 
 
 -- ===================================
@@ -64,7 +64,12 @@ instance Monad Concurrent where
 -- ===================================
 
 roundRobin :: [Action] -> IO ()
-roundRobin = error "You have to implement roundRobin"
+roundRobin [] = return ()
+roundRobin (Atom a:xs) = do na <- a
+                            roundRobin (xs ++ [na])
+roundRobin ((Fork a b):xs) = roundRobin (xs ++ [a,b])
+roundRobin (Stop:xs) = roundRobin xs
+                
 
 -- ===================================
 -- Tests
