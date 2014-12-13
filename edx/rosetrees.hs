@@ -9,10 +9,10 @@ data Rose a = a :> [Rose a] deriving Show
 -- ===================================
 
 root :: Rose a -> a 
-root = error "you have to implement root" 
+root (a :> _) = a
 
 children :: Rose a -> [Rose a]
-children = error "you have to implement children"
+children (_ :> cs) = cs
 
 xs = 0 :> [1 :> [2 :> [3 :> [4 :> [], 5 :> []]]], 6 :> [], 7 :> [8 :> [9 :> [10 :> []], 11 :> []], 12 :> [13 :> []]]]
 
@@ -23,10 +23,12 @@ ex2 = root . head . children . head . children . head . drop 2 $ children xs
 -- ===================================
 
 size :: Rose a -> Int
-size = error "you have to implement size"
+size r = 1 + foldl (\a x -> a + size x) 0 (children r)
 
 leaves :: Rose a -> Int
-leaves = error "you have to implement leaves"
+leaves r = if null (children r)
+           then 1
+           else foldl (\ a x -> a + leaves x) 0 (children r)
 
 ex7 = (*) (leaves . head . children . head . children $ xs) (product . map size . children . head . drop 2 . children $ xs)
 
@@ -35,7 +37,7 @@ ex7 = (*) (leaves . head . children . head . children $ xs) (product . map size 
 -- ===================================
 
 instance Functor Rose where
-  fmap = error "you have to implement fmap for Rose"
+  fmap f (a :> as) = f a :> map (fmap f) as
 
 ex10 = round . root . head . children . fmap (\x -> if x > 0.5 then x else 0) $ fmap (\x -> sin(fromIntegral x)) xs
 
@@ -51,17 +53,17 @@ newtype Sum a = Sum a
 newtype Product a = Product a
 
 instance Num a => Monoid (Sum a) where
-  mempty = error "you have to implement mempty for Sum"
-  mappend = error "you have to implement mappend for Sum"
+  mempty = Sum 0
+  n `mappend` m = Sum(unSum n + unSum m)
   
 instance Num a => Monoid (Product a) where
-  mempty = error "you have to implement mempty for Product"
-  mappend = error "you have to implement mappend for Product"
+  mempty = Product 1
+  n `mappend` m = Product(unProduct n * unProduct m)
 
 unSum :: Sum a -> a
-unSum = error "you have to implement unSum"
+unSum (Sum a) = a
 unProduct :: Product a -> a
-unProduct = error "you have to implement unProduct"
+unProduct (Product a) = a
 
 num1 = mappend (mappend (Sum 2) (mappend (mappend mempty (Sum 1)) mempty)) (mappend (Sum 2) (Sum 1))
   
@@ -76,10 +78,10 @@ ex13 = unSum (mappend (Sum 5) (Sum (unProduct (mappend (Product (unSum num2)) (m
 class Functor f => Foldable f where
   fold :: Monoid m => f m -> m
   foldMap :: Monoid m => (a -> m) -> (f a -> m)
-  foldMap = error "you have to implement foldMap"
-  
+  foldMap f = fold . fmap f
+
 instance Foldable Rose where
-  fold = error "you have to implement fold for Rose"
+  fold (a :> as) = a `mappend` foldr (\x a -> (fold x) `mappend` a) mempty as
   
 sumxs = Sum 0 :> [Sum 13 :> [Sum 26 :> [Sum (-31) :> [Sum (-45) :> [], Sum 23 :> []]]], Sum 27 :> [], Sum 9 :> [Sum 15 :> [Sum 3 :> [Sum (-113) :> []], Sum 1 :> []], Sum 71 :> [Sum 55 :> []]]]
 
@@ -98,8 +100,8 @@ ex18 = unSum (mappend (mappend (foldMap (\x -> Sum x) xs) (Sum (unProduct (mappe
 -- ===================================
 
 fproduct, fsum :: (Foldable f, Num a) => f a -> a
-fsum = error "you have to implement fsum"
-fproduct = error "you have to implement fproduct"
+fsum = (unSum . foldMap Sum)
+fproduct = (unProduct . foldMap Product)
 
 ex21 = ((fsum . head . drop 1 . children $ xs) + (fproduct . head . children . head . children . head . drop 2 . children $ xs)) - (fsum . head . children . head . children $ xs)
 
